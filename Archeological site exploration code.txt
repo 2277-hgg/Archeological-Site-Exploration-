@@ -1,0 +1,171 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <string>
+using namespace std;
+
+// List of archaeological locations in Hampi
+string place[6] = {
+    "Entrance",
+    "Hemakuta Hill",
+    "Krishna Temple",
+    "Sasivekalu Ganesha",
+    "Achyutaraya Temple",
+    "Vitthala Temple"
+};
+
+// Graph representing connections between locations
+vector<int> graph[6];
+
+// Display all locations
+void displayPlaces() {
+    cout << "\n--- Hampi Locations ---\n";
+
+    for (int i = 0; i < 6; i++) {
+        cout << i << ". " << place[i] << endl;
+    }
+}
+
+// Display connections between locations
+void displayConnections() {
+    cout << "\n--- Site Connections ---\n";
+
+    for (int i = 0; i < 6; i++) {
+        cout << place[i] << " -> ";
+
+        for (int j : graph[i]) {
+            cout << place[j] << "  ";
+        }
+
+        cout << endl;
+    }
+}
+
+// Search for a location by name
+void searchPlace() {
+    string name;
+
+    cout << "\nEnter location: ";
+    cin.ignore();
+    getline(cin, name);
+
+    for (int i = 0; i < 6; i++) {
+        if (place[i] == name) {
+            cout << "Location Found: " << place[i] << endl;
+            return;
+        }
+    }
+
+    cout << "Location Not Found.\n";
+}
+
+// Breadth-First Search (BFS)
+void BFS(int start) {
+    bool visited[6] = {};
+
+    queue<int> q;
+    visited[start] = true;
+    q.push(start);
+
+    cout << "\nBFS: ";
+
+    while (!q.empty()) {
+        int current = q.front();
+        q.pop();
+
+        cout << place[current] << " -> ";
+
+        for (int next : graph[current]) {
+            if (!visited[next]) {
+                visited[next] = true;
+                q.push(next);
+            }
+        }
+    }
+
+    cout << "END\n";
+}
+
+// Depth-First Search (DFS)
+void DFS(int current, bool visited[]) {
+    visited[current] = true;
+
+    cout << place[current] << " -> ";
+
+    for (int next : graph[current]) {
+        if (!visited[next]) {
+            DFS(next, visited);
+        }
+    }
+}
+
+// Main program
+int main() {
+    // Define connections between locations
+    graph[0] = {1, 2};
+    graph[1] = {0, 3};
+    graph[2] = {0, 4};
+    graph[3] = {1, 5};
+    graph[4] = {2, 5};
+    graph[5] = {3, 4};
+
+    int choice, start;
+
+    do {
+        cout << "\n===== ARCHAEOLOGICAL SITE EXPLORATION =====\n";
+        cout << "1. Display Locations\n";
+        cout << "2. Display Connections\n";
+        cout << "3. Search Location\n";
+        cout << "4. BFS Traversal\n";
+        cout << "5. DFS Traversal\n";
+        cout << "6. Exit\n";
+
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            displayPlaces();
+        }
+        else if (choice == 2) {
+            displayConnections();
+        }
+        else if (choice == 3) {
+            searchPlace();
+        }
+        else if (choice == 4) {
+            cout << "Enter starting node (0-5): ";
+            cin >> start;
+
+            if (start >= 0 && start < 6) {
+                BFS(start);
+            }
+            else {
+                cout << "Invalid node.\n";
+            }
+        }
+        else if (choice == 5) {
+            cout << "Enter starting node (0-5): ";
+            cin >> start;
+
+            if (start >= 0 && start < 6) {
+                bool visited[6] = {};
+
+                cout << "\nDFS: ";
+                DFS(start, visited);
+                cout << "END\n";
+            }
+            else {
+                cout << "Invalid node.\n";
+            }
+        }
+        else if (choice == 6) {
+            cout << "\nThank you!\n";
+        }
+        else {
+            cout << "\nInvalid choice.\n";
+        }
+
+    } while (choice != 6);
+
+    return 0;
+}
